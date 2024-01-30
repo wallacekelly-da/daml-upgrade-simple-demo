@@ -1,5 +1,7 @@
 module Main where
 
+import Daml.Script
+
 template Point
   with
     owner  : Party
@@ -16,3 +18,31 @@ template NamedPoint
     name  : Text
   where
     signatory owner
+
+test : Script ()
+test = do
+  alice <- allocatePartyWithHint "Alice" (PartyIdHint "Alice")
+  aliceId <- validateUserId "alice"
+  createUser (User aliceId (Some alice)) [CanActAs alice]
+
+  submit alice do
+    createCmd Point with
+      owner = alice
+      x = 3.0
+      y = 4.0
+
+  submit alice do
+    createCmd Point with
+      owner = alice
+      x = 5.0
+      y = 12.0
+
+  submit alice do
+    createCmd NamedPoint with
+      owner = alice
+      x = 0.0
+      y = 0.0
+      name = "Origin"
+
+  pure ()
+

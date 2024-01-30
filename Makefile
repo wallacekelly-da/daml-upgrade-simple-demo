@@ -30,10 +30,20 @@ ${MODEL_UPGRADE}: upgrade-model/daml.yaml
 
 .PHONY: run-ledger
 run-ledger: ${MODEL_V1} ${MODEL_V2} ${MODEL_UPGRADE}
-	 daml sandbox \
+	 daml sandbox --debug \
 		--dar ${MODEL_V1} \
         --dar ${MODEL_V2} \
         --dar ${MODEL_UPGRADE}
+
+.PHONY: run-script
+run-script: ${MODEL_V1}
+	daml script --ledger-host localhost --ledger-port 6865 \
+	   --dar ${MODEL_V1} \
+	   --script-name Main:test
+
+.PHONY: run-navigator
+run-navigator:
+	daml navigator server --feature-user-management=false
 
 .PHONY: clean
 clean:
