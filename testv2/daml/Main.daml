@@ -1,0 +1,19 @@
+module Main where
+
+template Point
+  with
+    owner  : Party
+    x      : Numeric 10
+    y      : Numeric 12 -- Higher Precision
+  where
+    signatory owner
+
+template NamedPoint
+  with
+    owner : Party
+    x     : Numeric 10
+    y     : Numeric 10
+    z     : Numeric 10 -- Additional Field
+    name  : Text
+  where
+    signatory owner

@@ -1,0 +1,18 @@
+module Main where
+
+template Point
+  with
+    owner  : Party
+    x      : Numeric 10
+    y      : Numeric 10
+  where
+    signatory owner
+
+template NamedPoint
+  with
+    owner : Party
+    x     : Numeric 10
+    y     : Numeric 10
+    name  : Text
+  where
+    signatory owner
