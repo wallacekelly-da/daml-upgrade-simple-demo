@@ -1,4 +1,5 @@
 *#
 *~
 .daml/
-upgrade-model/package_id
+upgrade-model
+alice_party_id
