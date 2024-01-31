@@ -3,6 +3,7 @@
 MODEL_V1=testv1/.daml/dist/test-0.0.1.dar
 MODEL_V2=testv2/.daml/dist/test-0.0.2.dar
 MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-test-1.0.0.dar
+UPGRADE_PACKAGE_ID=upgrade-model/package_id
 
 .PHONY: build-models
 build-models: ${MODEL_V1} ${MODEL_V2}
@@ -23,10 +24,14 @@ upgrade-model/daml.yaml: ${MODEL_V1} ${MODEL_V2}
 		-v 1.0.0 -o /work/upgrade-model
 
 .PHONY: build-upgrade-model
-build-upgrade-model: ${MODEL_UPGRADE}
+build-upgrade-model: ${UPGRADE_PACKAGE_ID}
 
 ${MODEL_UPGRADE}: upgrade-model/daml.yaml
 	(cd upgrade-model && daml build)
+
+${UPGRADE_PACKAGE_ID}: ${MODEL_UPGRADE}
+	 daml damlc inspect-dar --json ${MODEL_UPGRADE} \
+		| jq '.main_package_id' > ${UPGRADE_PACKAGE_ID}
 
 .PHONY: run-ledger
 run-ledger: ${MODEL_V1} ${MODEL_V2} ${MODEL_UPGRADE}
@@ -44,6 +49,10 @@ run-script: ${MODEL_V1}
 .PHONY: run-navigator
 run-navigator:
 	daml navigator server --feature-user-management=false
+
+.PHONY: liar-parties
+list-parties:
+	 daml ledger list-parties --host localhost --port 6865 --json | jq '.'
 
 .PHONY: clean
 clean:
