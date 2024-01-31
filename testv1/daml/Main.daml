@@ -19,12 +19,22 @@ template NamedPoint
   where
     signatory owner
 
+ensureParty : Text -> Script Party
+ensureParty partyName = do
+  knownParties <- listKnownParties
+
+  case find (\pd -> pd.displayName == Some partyName) knownParties of
+    Some p -> pure p.party
+    None -> do
+      alice <- allocatePartyWithHint partyName (PartyIdHint partyName)
+      aliceId <- validateUserId partyName
+      createUser (User aliceId (Some alice)) [CanActAs alice]
+      pure alice
+
 test : Script ()
 test = do
-  alice <- allocatePartyWithHint "Alice" (PartyIdHint "Alice")
-  aliceId <- validateUserId "alice"
-  createUser (User aliceId (Some alice)) [CanActAs alice]
-
+  alice <- ensureParty "alice"
+  
   submit alice do
     createCmd Point with
       owner = alice
@@ -45,4 +55,3 @@ test = do
       name = "Origin"
 
   pure ()
-
