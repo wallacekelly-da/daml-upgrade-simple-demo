@@ -2,6 +2,9 @@ module Main where
 
 import Daml.Script
 
+import DA.Foldable (forA_)
+import DA.Numeric (cast)
+
 template Point
   with
     owner  : Party
@@ -35,23 +38,24 @@ test : Script ()
 test = do
   alice <- ensureParty "alice"
   
-  submit alice do
-    createCmd Point with
-      owner = alice
-      x = 3.0
-      y = 4.0
+  forA_ [0..1000] (\ii -> do
+    submit alice do
+      createCmd Point with
+        owner = alice
+        x = 3.0
+        y = 4.0
 
-  submit alice do
-    createCmd Point with
-      owner = alice
-      x = 5.0
-      y = 12.0
+    submit alice do
+      createCmd Point with
+        owner = alice
+        x = 5.0
+        y = 12.0
 
-  submit alice do
-    createCmd NamedPoint with
-      owner = alice
-      x = 0.0
-      y = 0.0
-      name = "Origin"
+    submit alice do
+      createCmd NamedPoint with
+        owner = alice
+        x = 0.0
+        y = 0.0
+        name = "Origin")
 
   pure ()
