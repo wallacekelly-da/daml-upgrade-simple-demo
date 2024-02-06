@@ -4,6 +4,7 @@ import Daml.Script
 
 import DA.Foldable (forA_)
 import DA.Numeric (cast)
+import DA.Action (when)
 
 template Point
   with
@@ -34,11 +35,9 @@ ensureParty partyName = do
       createUser (User aliceId (Some alice)) [CanActAs alice]
       pure alice
 
-progressIndicator : Integer -> Script ()
-progressIndicator x = do
-  if x % 10 == 0
-  then debug $ show x 
-  else pure ()
+progressIndicator : Int -> Script ()
+progressIndicator x = 
+  when (x % 10 == 0) $ debugRaw $ "[" <> show x <> "]"
 
 test : Script ()
 test = do
