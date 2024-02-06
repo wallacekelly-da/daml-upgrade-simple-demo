@@ -5,18 +5,15 @@ set -euo pipefail
 source "common.sh"
 
 if [ ! -f ${MODEL_V1} ]; then
-    echo "DAR file ${MODEL_V1} not found, run build-base-models-and-codegen.sh."
-    exit 1
+    _error "DAR file ${MODEL_V1} not found, run build-base-models-and-codegen.sh."
 fi
 
 if [ ! -f ${MODEL_V2} ]; then
-    echo "DAR file ${MODEL_V2} not found, run build-base-models-and-codegen.sh."
-    exit 1
+    _error "DAR file ${MODEL_V2} not found, run build-base-models-and-codegen.sh."
 fi
 
 if [ ! -f ${MODEL_UPGRADE} ]; then
-    echo "DAR file ${MODEL_V2} not found, run build-upgrade-model.sh."
-    exit 1
+    _error "DAR file ${MODEL_V2} not found, run build-upgrade-model.sh."
 fi
 
 
@@ -25,10 +22,10 @@ if [ -f "$pid_file" ]; then
     pid=$(<"$pid_file")
 
     if ps -p $pid > /dev/null; then
-        echo "INFO: Ledger already running. (PID: $pid)"
+        _info "Ledger already running. (PID: $pid)"
         exit 1
     else
-        echo "WARNING: Stale PID file found, but process not running. Cleaning up $pid_file and starting ledger."
+        _warning "Stale PID file found, but process not running. Cleaning up $pid_file and starting ledger."
         rm "$pid_file"
     fi
 fi
@@ -44,14 +41,19 @@ echo $! > "$pid_file"
 
 pid=$(<"$pid_file")
 
-echo "Started Canton ledger (PID: $pid) with log output in log/."
+_info "Started Canton ledger (PID: $pid) with log output in log/
 
-echo "Waiting for ledger startup and then initializing ledger."
+Waiting a few seconds for ledger startup..."
+
 sleep 10
 
-echo "Running startup script..."
+_info "Running startup script to initialize ledger."
 daml script --ledger-host localhost --ledger-port 6865 \
    --dar ${MODEL_V1} \
    --script-name Main:test
 
-echo "Done."
+_info "Ledger running and initialized.
+
+Run contract upgrade with ./run-upgrade.sh
+
+Stop the ledger with ./stop-ledger.sh"

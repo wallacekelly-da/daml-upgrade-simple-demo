@@ -34,11 +34,20 @@ ensureParty partyName = do
       createUser (User aliceId (Some alice)) [CanActAs alice]
       pure alice
 
+progressIndicator : Integer -> Script ()
+progressIndicator x = do
+  if x % 10 == 0
+  then debug $ show x 
+  else pure ()
+
 test : Script ()
 test = do
   alice <- ensureParty "alice"
   
   forA_ [0..1000] (\ii -> do
+
+    progressIndicator ii
+
     submit alice do
       createCmd Point with
         owner = alice
@@ -56,6 +65,6 @@ test = do
         owner = alice
         x = 0.0
         y = 0.0
-        name = "Origin")
+        name = "Origin")        
 
   pure ()

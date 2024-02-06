@@ -6,4 +6,4 @@ source "common.sh"
 
 (cd testv1 && daml clean)
 (cd testv2 && daml clean)
-rm -rfv upgrade-model
+rm -rfv upgrade-model target
