@@ -1,3 +1,5 @@
+{-# LANGUAGE ApplicativeDo #-}
+
 module Main where
 
 import Daml.Script
@@ -44,26 +46,21 @@ test = do
   alice <- ensureParty "alice"
   
   forA_ [0..1000] (\ii -> do
-
     progressIndicator ii
-
     submit alice do
       createCmd Point with
         owner = alice
         x = 3.0
         y = 4.0
-
-    submit alice do
       createCmd Point with
         owner = alice
         x = 5.0
         y = 12.0
-
-    submit alice do
       createCmd NamedPoint with
         owner = alice
         x = 0.0
         y = 0.0
-        name = "Origin")        
+        name = "Origin"
+      pure ())
 
   pure ()
