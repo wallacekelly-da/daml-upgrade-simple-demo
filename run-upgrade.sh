@@ -35,7 +35,7 @@ daml script --ledger-host localhost --ledger-port 6865 \
      --input-file target/init.json
 
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
-    digitalasset-docker.jfrog.io/daml-upgrade:1.4.2 \
+    "${DAML_UPGRADE_IMAGE}" \
     init-upgrader \
     --config /work/upgrade.conf \
     --upgrader "$party" \
@@ -56,7 +56,7 @@ daml script --ledger-host localhost --ledger-port 6865 \
 _info "Running upgrade."
 
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
-    digitalasset-docker.jfrog.io/daml-upgrade:1.4.2 \
+    "${DAML_UPGRADE_IMAGE}" \
     run-upgrade \
     --config /work/upgrade.conf \
     --upgrader "$party" \
@@ -66,7 +66,7 @@ docker run --platform=linux/amd64 --rm --network=host -v .:/work \
 _info "Cleaning up upgrade state."
 
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
-    digitalasset-docker.jfrog.io/daml-upgrade:1.4.2 \
+    "${DAML_UPGRADE_IMAGE}" \
     cleanup \
     --config /work/cleanup.conf \
     --upgrader "$party" \
