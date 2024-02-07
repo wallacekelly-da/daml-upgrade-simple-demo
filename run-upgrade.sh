@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "common.sh"
+source "conf/common.sh"
 
 
 _info "Capturing party ID for Alice."
@@ -37,7 +37,7 @@ daml script --ledger-host localhost --ledger-port 6865 \
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar init-upgrader \
-    --config /work/upgrade.conf \
+    --config /work/conf/upgrade.conf \
     --upgrader "$party" \
     --upgrade-package-id "$package_id"
 
@@ -58,7 +58,7 @@ _info "Running upgrade."
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar run-upgrade \
-    --config /work/upgrade.conf \
+    --config /work/conf/upgrade.conf \
     --upgrader "$party" \
     --upgrade-package-id "$package_id"
 
@@ -68,7 +68,7 @@ _info "Cleaning up upgrade state."
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar cleanup \
-    --config /work/cleanup.conf \
+    --config /work/conf/cleanup.conf \
     --upgrader "$party" \
     --upgrade-package-id "$package_id" \
     --batch-size 10

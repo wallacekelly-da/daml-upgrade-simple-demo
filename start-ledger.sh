@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "common.sh"
+source "conf/common.sh"
 
 if [ ! -f ${MODEL_V1} ]; then
     _error "DAR file ${MODEL_V1} not found, run build-base-models-and-codegen.sh."

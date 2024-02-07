@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "common.sh"
+source "conf/common.sh"
 
 pid_file="canton.pid"
 if [ -f "$pid_file" ]; then

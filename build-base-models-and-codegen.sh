@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "common.sh"
+source "conf/common.sh"
 
 _info "Building testv1 model."
 (cd testv1 && daml build)

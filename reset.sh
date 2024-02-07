@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-source "common.sh"
+source "conf/common.sh"
 
 (cd testv1 && daml clean)
 (cd testv2 && daml clean)
