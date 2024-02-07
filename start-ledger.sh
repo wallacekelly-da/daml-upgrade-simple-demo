@@ -4,6 +4,10 @@ set -euo pipefail
 
 source "conf/common.sh"
 
+if [ -f ${ALICE_JWT_FILE} ]; then
+    _error "Credentials found for Daml Hub in ${ALICE_JWT_FILE}, please delete or rename this file to switch to local operation."
+fi
+
 if [ ! -f ${MODEL_V1} ]; then
     _error "DAR file ${MODEL_V1} not found, run build-base-models-and-codegen.sh."
 fi
@@ -52,6 +56,8 @@ _info "Running startup script to create party."
 daml script --ledger-host localhost --ledger-port 6865 \
    --dar ${MODEL_V1} \
    --script-name Main:ensureTestParty
+
+rm -fv target/alice.json
 
 _info "Capturing Alice's party ID."
 party=$(_get_alice_party_id)

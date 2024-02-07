@@ -5,12 +5,35 @@ MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-project-1.0.0.dar
 
 UPGRADE_PACKAGE_ID=upgrade-model/package_id
 
-DAML_UPGRADE_IMAGE=digitalasset-docker.jfrog.io/daml-upgrade:2.1.0
+DOCKER_CONFIG="--platform=linux/amd64 --rm --network=host -v ./conf:/home/user/conf"
+DAML_UPGRADE_IMAGE="digitalasset-docker.jfrog.io/daml-upgrade:2.1.0"
 
-LEDGER_SCRIPT_CONNECTION="--ledger-host localhost --ledger-port 6865"
+ALICE_JWT_FILE="conf/alice-hub-jwt.json"
+UPGRADE_CONF="conf/upgrade.conf"
+CLEANUP_CONF="conf/cleanup.conf"
 
-UPGRADE_CONF=conf/local-upgrade.conf
-CLEANUP_CONF=conf/local-cleanup.conf
+function jwt_decode(){
+    jq -R 'split(".") | .[1] | @base64d | fromjson' <<< "$1"
+}
+
+function init_ledger_environment() {
+
+    if [ -f ${ALICE_JWT_FILE} ]; then
+        LEDGER_ID=$(jwt_decode $(<${ALICE_JWT_FILE}) | jq -r '.ledgerId')
+
+        _info "Connecting to Hub ledger: ${LEDGER_ID}"
+
+        LEDGER_SCRIPT_CONNECTION="--ledger-host ${LEDGER_ID}.daml.app \
+                                  --ledger-port 443 \
+                                  --application-id damlhub \
+                                  --tls \
+                                  --access-token-file ${ALICE_JWT_FILE}"
+        LEDGER_DOCKER_CONNECTION="${LEDGER_SCRIPT_CONNECTION}"
+    else
+        LEDGER_SCRIPT_CONNECTION="--ledger-host localhost --ledger-port 6865"
+        LEDGER_DOCKER_CONNECTION="--ledger-host host.docker.internal --ledger-port 6865"
+    fi
+}
 
 # issue a user friendly red error and die
 function _error(){
@@ -40,7 +63,6 @@ function _info(){
   done < <(echo -e "$@")
 }
 
-
 # issue a user friendly yellow warning
 function _warning(){
   local first_line="WARNING: "
@@ -60,10 +82,13 @@ function _nope(){
   echo -e "\e[31;1m✘\e[0m ${@}"
 }
 
-
 function _get_alice_party_id(){
-    party=$(daml ledger list-parties --host localhost --port 6865 --json \
-                | jq -r 'first(.|map(.party)|.[] | select(contains("alice")))')
+    if [ -f target/alice.json ]; then
+         party=$(jq -r '.' < target/alice.json)
+    else
+        party=$(daml ledger list-parties --host localhost --port 6865 --json \
+                    | jq -r 'first(.|map(.party)|.[] | select(contains("alice")))')
+    fi
 
     echo "${party}"
 }

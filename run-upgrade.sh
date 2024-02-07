@@ -4,6 +4,8 @@ set -euo pipefail
 
 source "conf/common.sh"
 
+init_ledger_environment
+
 _info "Capturing Alice's party ID."
 party=$(_get_alice_party_id)
 
@@ -31,12 +33,12 @@ daml script ${LEDGER_SCRIPT_CONNECTION} \
      --script-name "DA.DamlUpgrade.InitiateUpgrade:initializeUpgraders" \
      --input-file target/init.json
 
-docker run --platform=linux/amd64 --rm --network=host -v .:/work \
-    "${DAML_UPGRADE_IMAGE}" \
+docker run ${DOCKER_CONFIG} "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar init-upgrader \
-    --config /work/${UPGRADE_CONF} \
+    --config ${UPGRADE_CONF} \
     --upgrader "$party" \
-    --upgrade-package-id "$package_id"
+    --upgrade-package-id "$package_id" \
+    ${LEDGER_DOCKER_CONNECTION}
 
 _info "Accepting upgrade proposals."
 cat <<EOF > target/parties.json
@@ -52,23 +54,22 @@ daml script ${LEDGER_SCRIPT_CONNECTION} \
 
 _info "Running upgrade."
 
-docker run --platform=linux/amd64 --rm --network=host -v .:/work \
-    "${DAML_UPGRADE_IMAGE}" \
+docker run ${DOCKER_CONFIG} "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar run-upgrade \
-    --config /work/${UPGRADE_CONF} \
+    --config ${UPGRADE_CONF} \
     --upgrader "$party" \
-    --upgrade-package-id "$package_id"
-
+    --upgrade-package-id "$package_id" \
+    ${LEDGER_DOCKER_CONNECTION}
 
 _info "Cleaning up upgrade state."
 
-docker run --platform=linux/amd64 --rm --network=host -v .:/work \
-    "${DAML_UPGRADE_IMAGE}" \
+docker run ${DOCKER_CONFIG} "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar cleanup \
-    --config /work/${CLEANUP_CONF} \
+    --config ${CLEANUP_CONF} \
     --upgrader "$party" \
     --upgrade-package-id "$package_id" \
-    --batch-size 10
+    --batch-size 10 \
+     ${LEDGER_DOCKER_CONNECTION}
 
 mkdir -p target
 

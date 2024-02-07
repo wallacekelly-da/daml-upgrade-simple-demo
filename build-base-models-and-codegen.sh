@@ -4,11 +4,13 @@ set -euo pipefail
 
 source "conf/common.sh"
 
+mkdir -pv target
+
 _info "Building testv1 model."
-(cd testv1 && daml build)
+(cd testv1 && daml build) && cp ${MODEL_V1} target
 
 _info "Building testv2 model."
-(cd testv2 && daml build)
+(cd testv2 && daml build) && cp ${MODEL_V2} target
 
 _info "Generating code for migration."
 docker run --platform=linux/amd64 --rm --user 1000:1000 -v .:/work \
