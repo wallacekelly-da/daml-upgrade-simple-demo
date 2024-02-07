@@ -13,7 +13,7 @@ if [ ! -f ${MODEL_V2} ]; then
 fi
 
 if [ ! -f ${MODEL_UPGRADE} ]; then
-    _error "DAR file ${MODEL_V2} not found, run build-upgrade-model.sh."
+    _error "DAR file ${MODEL_UPGRADE} not found, run build-upgrade-model.sh."
 fi
 
 

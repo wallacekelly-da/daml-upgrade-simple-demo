@@ -13,7 +13,7 @@ _info "Building testv2 model."
 _info "Generating code for migration."
 docker run --platform=linux/amd64 --rm --user 1000:1000 -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
-    upgrade-codegen generate /work/${MODEL_V1} /work/${MODEL_V2}  \
+    upgrade-codegen generate --old /work/${MODEL_V1} --new /work/${MODEL_V2}  \
     -v 1.0.0 -o /work/upgrade-model
 
 

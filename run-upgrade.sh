@@ -36,7 +36,7 @@ daml script --ledger-host localhost --ledger-port 6865 \
 
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
-    init-upgrader \
+    java -jar upgrade-runner.jar init-upgrader \
     --config /work/upgrade.conf \
     --upgrader "$party" \
     --upgrade-package-id "$package_id"
@@ -57,7 +57,7 @@ _info "Running upgrade."
 
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
-    run-upgrade \
+    java -jar upgrade-runner.jar run-upgrade \
     --config /work/upgrade.conf \
     --upgrader "$party" \
     --upgrade-package-id "$package_id"
@@ -67,7 +67,7 @@ _info "Cleaning up upgrade state."
 
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
-    cleanup \
+    java -jar upgrade-runner.jar cleanup \
     --config /work/cleanup.conf \
     --upgrader "$party" \
     --upgrade-package-id "$package_id" \
