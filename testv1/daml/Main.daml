@@ -30,10 +30,10 @@ ensureParty partyName = do
   case find (\pd -> pd.displayName == Some partyName) knownParties of
     Some p -> pure p.party
     None -> do
-      alice <- allocatePartyWithHint partyName (PartyIdHint partyName)
-      aliceId <- validateUserId partyName
-      createUser (User aliceId (Some alice)) [CanActAs alice]
-      pure alice
+      party <- allocatePartyWithHint partyName (PartyIdHint partyName)
+      partyId <- validateUserId partyName
+      createUser (User partyId (Some party)) [CanActAs party]
+      pure party
 
 batchCommand : Int -> [Commands ()] -> [Commands ()]
 batchCommand n [] = []
@@ -44,35 +44,36 @@ batchCommand n (xs) =
 batchSize = 100
 contractGroups = 1000
 
-test : Script ()
-test = do
-  alice <- ensureParty "alice"
+ensureTestParty : Script Party
+ensureTestParty = do
+  ensureParty "alice"
 
+createTestContracts : Party -> Script ()
+createTestContracts party = do
   debugRaw $ "Generating commands to create " <> (show contractGroups) <> " contract group(s)."
   batches <- batchCommand batchSize <$> forA [0..contractGroups-1] (\ii -> do
     let 
      commands = do 
       createCmd Point with
-        owner = alice
+        owner = party
         x = 3.0
         y = 4.0
       createCmd Point with
-        owner = alice
+        owner = party
         x = 5.0
         y = 12.0
       createCmd NamedPoint with
-        owner = alice
+        owner = party
         x = 0.0
         y = 0.0
         name = "Origin"
       pure ()
     pure commands)
 
-  -- TODO: Investigate why the number of batches is batchSize/contractGroups rather than (batchSize/contractGroups)*3
   debugRaw $ "Submitting " <> (show (length batches)) <> " batches with " <> (show batchSize) <> " commands each."
   forA_ batches (\batch -> do
     debugRaw "Submitting batch..."
-    submit alice batch)
+    submit party batch)
 
   pure ()
 

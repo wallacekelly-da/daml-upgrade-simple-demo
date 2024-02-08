@@ -4,7 +4,6 @@ MODEL_V2=testv2/.daml/dist/test-0.0.2.dar
 MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-project-1.0.0.dar
 
 UPGRADE_PACKAGE_ID=upgrade-model/package_id
-ALICE_PARTY_ID=alice_party_id
 
 DAML_UPGRADE_IMAGE=digitalasset-docker.jfrog.io/daml-upgrade:2.1.0
 
@@ -23,7 +22,7 @@ function _log() {
 function _error_msg(){
   local RC=$?
   ((RC)) || RC=1
-  echo -e "\e[1;31mERROR: $@\e[0m" >&2
+  echo -e "\e[1;31mERROR: $@\e[0m"
   return ${RC}
 }
 
@@ -54,4 +53,12 @@ function _ok(){
 # prints a little red x mark before $@ and sets check to 1 if you are using it
 function _nope(){
   echo -e "\e[31;1m✘\e[0m ${@}"
+}
+
+
+function _get_alice_party_id(){
+    party=$(daml ledger list-parties --host localhost --port 6865 --json \
+                | jq -r 'first(.|map(.party)|.[] | select(contains("alice")))')
+
+    echo "${party}"
 }

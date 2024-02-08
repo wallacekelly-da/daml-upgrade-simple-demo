@@ -31,6 +31,7 @@ if [ -f "$pid_file" ]; then
 fi
 
 mkdir -pv log
+mkdir -pv target
 
 daml sandbox --debug \
      --dar ${MODEL_V1} \
@@ -47,10 +48,22 @@ Waiting a few seconds for ledger startup..."
 
 sleep 10
 
+_info "Running startup script to create party."
+daml script --ledger-host localhost --ledger-port 6865 \
+   --dar ${MODEL_V1} \
+   --script-name Main:ensureTestParty
+
+_info "Capturing Alice's party ID."
+party=$(_get_alice_party_id)
+_info "Party ID: $party"
+
+echo "\"${party}\"" > target/alice.json
+
 _info "Running startup script to initialize ledger."
 daml script --ledger-host localhost --ledger-port 6865 \
    --dar ${MODEL_V1} \
-   --script-name Main:test
+   --script-name Main:createTestContracts \
+   --input-file target/alice.json
 
 _info "Ledger running and initialized.
 

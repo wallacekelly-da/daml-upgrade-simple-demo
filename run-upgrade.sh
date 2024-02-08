@@ -4,13 +4,10 @@ set -euo pipefail
 
 source "conf/common.sh"
 
-
-_info "Capturing party ID for Alice."
-party=$(daml ledger list-parties --host localhost --port 6865 --json \
-            | jq -r 'first(.|map(.party)|.[] | select(contains("alice")))')
+_info "Capturing Alice's party ID."
+party=$(_get_alice_party_id)
 
 _info "Capturing upgrade package ID."
-
 package_id=$(daml damlc inspect-dar --json ${MODEL_UPGRADE} \
                  | jq -r '.main_package_id')
 
