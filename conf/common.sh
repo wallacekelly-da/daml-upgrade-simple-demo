@@ -7,6 +7,11 @@ UPGRADE_PACKAGE_ID=upgrade-model/package_id
 
 DAML_UPGRADE_IMAGE=digitalasset-docker.jfrog.io/daml-upgrade:2.1.0
 
+LEDGER_SCRIPT_CONNECTION="--ledger-host localhost --ledger-port 6865"
+
+UPGRADE_CONF=conf/local-upgrade.conf
+CLEANUP_CONF=conf/local-cleanup.conf
+
 # issue a user friendly red error and die
 function _error(){
   _error_msg "$@"

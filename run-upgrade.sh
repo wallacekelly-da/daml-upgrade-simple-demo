@@ -26,7 +26,7 @@ cat <<EOF > target/init.json
 }
 EOF
 
-daml script --ledger-host localhost --ledger-port 6865 \
+daml script ${LEDGER_SCRIPT_CONNECTION} \
      --dar ${MODEL_UPGRADE} \
      --script-name "DA.DamlUpgrade.InitiateUpgrade:initializeUpgraders" \
      --input-file target/init.json
@@ -34,7 +34,7 @@ daml script --ledger-host localhost --ledger-port 6865 \
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar init-upgrader \
-    --config /work/conf/upgrade.conf \
+    --config /work/${UPGRADE_CONF} \
     --upgrader "$party" \
     --upgrade-package-id "$package_id"
 
@@ -45,7 +45,7 @@ cat <<EOF > target/parties.json
 ]
 EOF
 
-daml script --ledger-host localhost --ledger-port 6865 \
+daml script ${LEDGER_SCRIPT_CONNECTION} \
      --dar ${MODEL_UPGRADE} \
      --script-name "DA.DamlUpgrade.UpgradeConsent:acceptUpgradeProposalsScript" \
      --input-file target/parties.json
@@ -55,7 +55,7 @@ _info "Running upgrade."
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar run-upgrade \
-    --config /work/conf/upgrade.conf \
+    --config /work/${UPGRADE_CONF} \
     --upgrader "$party" \
     --upgrade-package-id "$package_id"
 
@@ -65,7 +65,7 @@ _info "Cleaning up upgrade state."
 docker run --platform=linux/amd64 --rm --network=host -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
     java -jar upgrade-runner.jar cleanup \
-    --config /work/conf/cleanup.conf \
+    --config /work/${CLEANUP_CONF} \
     --upgrader "$party" \
     --upgrade-package-id "$package_id" \
     --batch-size 10
@@ -74,7 +74,7 @@ mkdir -p target
 
 echo "\"$party\"" > target/upgrade-coordinator.party
 
-daml script --ledger-host localhost --ledger-port 6865 \
+daml script ${LEDGER_SCRIPT_CONNECTION} \
      --dar ${MODEL_UPGRADE} \
      --script-name "DA.DamlUpgrade.Status:cleanupStatus" \
      --input-file target/upgrade-coordinator.party
