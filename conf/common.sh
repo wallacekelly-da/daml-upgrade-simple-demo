@@ -6,7 +6,7 @@ MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-project-1.0.0.dar
 UPGRADE_PACKAGE_ID=upgrade-model/package_id
 
 DOCKER_CONFIG="--platform=linux/amd64 --rm --network=host -v ./conf:/home/user/conf"
-DAML_UPGRADE_IMAGE="digitalasset-docker.jfrog.io/daml-upgrade:2.1.0"
+DAML_UPGRADE_IMAGE="digitalasset-docker.jfrog.io/daml-upgrade:2.1.1"
 
 ALICE_JWT_FILE="conf/alice-hub-jwt.json"
 UPGRADE_CONF="conf/upgrade.conf"
