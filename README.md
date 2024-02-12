@@ -37,6 +37,11 @@ a few packages you'll need to have installed.
 The state of the local project directory may be totally reset by running
 `./reset.sh`.
 
+The state of the local ledger may be inspected with the following
+Navigator command: `daml navigator server localhost 6865
+--feature-user-management false`. Be sure you select the role for
+`Alice`.
+
 ## Running against Daml Hub
 
 Running the upgrade against Daml Hub is largely the same as the local
@@ -65,6 +70,11 @@ point to the Hub ledger.
 
 The state of the local project directory may be totally reset by
 running `./reset.sh`.
+
+The state of the Hub ledger may be inspected using the Hub console's
+live data view. Be sure you select the `Alice` party, and note that
+the live data view will require querying for specific templates once
+the ledger exceeds 50,000 events.
 
 ## Modifying Generated Daml
 
