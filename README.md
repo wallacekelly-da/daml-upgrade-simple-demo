@@ -21,9 +21,9 @@ a few packages you'll need to have installed.
 ## Running Locally
 
 1. Run `./build-base-models-and-codegen.sh` to build the two base Daml
-   models and run the upgrade tool's code generation step via . (If
-   there is already generated code in `upgrade-model`, the existing
-   code will not be overwritten.)
+   models and run the upgrade tool's code generation step. (If there
+   is already generated code in `upgrade-model`, the existing code
+   will not be overwritten.)
 2. [Edit the generated code](#modifying-generated-daml) in `upgrade-model`.
 3. Run `./build-upgrade-model.sh` to build the edited upgrade model.
 4. Run `./start-ledger.sh` to start a local sandbox ledger. This will
