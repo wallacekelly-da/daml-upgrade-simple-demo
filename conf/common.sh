@@ -1,8 +1,8 @@
 
-MODEL_V1=testv1/.daml/dist/test-0.0.1.dar
-MODEL_V2=testv2/.daml/dist/test-0.0.2.dar
-SCRIPTS=scripts/.daml/dist/test-scripts-0.0.1.dar
-MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-project-1.0.0.dar
+DAR_MODEL_V1=testv1/.daml/dist/test-0.0.1.dar
+DAR_MODEL_V2=testv2/.daml/dist/test-0.0.2.dar
+DAR_SCRIPTS=scripts/.daml/dist/test-scripts-0.0.1.dar
+DAR_MODEL_UPGRADE=upgrade-model/.daml/dist/upgrade-project-1.0.0.dar
 
 UPGRADE_PACKAGE_ID=upgrade-model/package_id
 

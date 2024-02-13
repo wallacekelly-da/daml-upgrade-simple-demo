@@ -10,7 +10,7 @@ _info "Capturing Alice's party ID."
 party=$(_get_alice_party_id)
 
 _info "Capturing upgrade package ID."
-package_id=$(daml damlc inspect-dar --json ${MODEL_UPGRADE} \
+package_id=$(daml damlc inspect-dar --json ${DAR_MODEL_UPGRADE} \
                  | jq -r '.main_package_id')
 
 _info "Party ID: $party
@@ -29,7 +29,7 @@ cat <<EOF > target/init.json
 EOF
 
 daml script ${LEDGER_SCRIPT_CONNECTION} \
-     --dar ${MODEL_UPGRADE} \
+     --dar ${DAR_MODEL_UPGRADE} \
      --script-name "DA.DamlUpgrade.InitiateUpgrade:initializeUpgraders" \
      --input-file target/init.json
 
@@ -48,7 +48,7 @@ cat <<EOF > target/parties.json
 EOF
 
 daml script ${LEDGER_SCRIPT_CONNECTION} \
-     --dar ${MODEL_UPGRADE} \
+     --dar ${DAR_MODEL_UPGRADE} \
      --script-name "DA.DamlUpgrade.UpgradeConsent:acceptUpgradeProposalsScript" \
      --input-file target/parties.json
 
@@ -76,7 +76,7 @@ mkdir -p target
 echo "\"$party\"" > target/upgrade-coordinator.party
 
 daml script ${LEDGER_SCRIPT_CONNECTION} \
-     --dar ${MODEL_UPGRADE} \
+     --dar ${DAR_MODEL_UPGRADE} \
      --script-name "DA.DamlUpgrade.Status:cleanupStatus" \
      --input-file target/upgrade-coordinator.party
 

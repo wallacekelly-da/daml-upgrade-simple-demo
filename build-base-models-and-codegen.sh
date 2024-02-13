@@ -7,18 +7,18 @@ source "conf/common.sh"
 mkdir -pv target
 
 _info "Building testv1 model."
-(cd testv1 && daml build) && cp ${MODEL_V1} target
+(cd testv1 && daml build) && cp ${DAR_MODEL_V1} target
 
 _info "Building scripts model."
-(cd scripts && daml build) && cp ${SCRIPTS} target
+(cd scripts && daml build) && cp ${DAR_SCRIPTS} target
 
 _info "Building testv2 model."
-(cd testv2 && daml build) && cp ${MODEL_V2} target
+(cd testv2 && daml build) && cp ${DAR_MODEL_V2} target
 
 _info "Generating code for migration."
 docker run --platform=linux/amd64 --rm --user 1000:1000 -v .:/work \
     "${DAML_UPGRADE_IMAGE}" \
-    upgrade-codegen generate --old /work/${MODEL_V1} --new /work/${MODEL_V2}  \
+    upgrade-codegen generate --old /work/${DAR_MODEL_V1} --new /work/${DAR_MODEL_V2}  \
     -v 1.0.0 -o /work/upgrade-model
 
 
