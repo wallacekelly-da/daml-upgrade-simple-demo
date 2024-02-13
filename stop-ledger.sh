@@ -4,7 +4,7 @@ set -euo pipefail
 
 source "conf/common.sh"
 
-pid_file="canton.pid"
+pid_file="target/canton.pid"
 if [ -f "$pid_file" ]; then
     pid=$(<"$pid_file")
 

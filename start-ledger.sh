@@ -24,8 +24,10 @@ if [ ! -f ${DAR_MODEL_UPGRADE} ]; then
     _error "DAR file ${DAR_MODEL_UPGRADE} not found, run build-upgrade-model.sh."
 fi
 
+mkdir -pv log
+mkdir -pv target
 
-pid_file="canton.pid"
+pid_file="target/canton.pid"
 if [ -f "$pid_file" ]; then
     pid=$(<"$pid_file")
 
@@ -37,9 +39,6 @@ if [ -f "$pid_file" ]; then
         rm "$pid_file"
     fi
 fi
-
-mkdir -pv log
-mkdir -pv target
 
 daml sandbox --debug \
      --dar ${DAR_MODEL_V1} \
