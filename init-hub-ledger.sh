@@ -14,7 +14,7 @@ init_ledger_environment
 
 _info "Running startup script to initialize ledger."
 daml script ${LEDGER_SCRIPT_CONNECTION} \
-   --dar ${MODEL_V1} \
+   --dar ${SCRIPTS} \
    --script-name Main:createTestContracts \
    --input-file target/alice.json
 

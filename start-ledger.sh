@@ -12,6 +12,10 @@ if [ ! -f ${MODEL_V1} ]; then
     _error "DAR file ${MODEL_V1} not found, run build-base-models-and-codegen.sh."
 fi
 
+if [ ! -f ${SCRIPTS} ]; then
+    _error "DAR file ${SCRIPTS} not found, run build-base-models-and-codegen.sh."
+fi
+
 if [ ! -f ${MODEL_V2} ]; then
     _error "DAR file ${MODEL_V2} not found, run build-base-models-and-codegen.sh."
 fi
@@ -40,6 +44,7 @@ mkdir -pv target
 daml sandbox --debug \
      --dar ${MODEL_V1} \
      --dar ${MODEL_V2} \
+     --dar ${SCRIPTS} \
      --dar ${MODEL_UPGRADE} \
      &> log/canton-console.log &
 echo $! > "$pid_file"
@@ -54,8 +59,8 @@ sleep 10
 
 _info "Running startup script to create party."
 daml script --ledger-host localhost --ledger-port 6865 \
-   --dar ${MODEL_V1} \
-   --script-name Main:ensureTestParty
+   --dar ${SCRIPTS} \
+   --script-name Scripts:ensureTestParty
 
 rm -fv target/alice.json
 
@@ -67,8 +72,8 @@ echo "\"${party}\"" > target/alice.json
 
 _info "Running startup script to initialize ledger."
 daml script --ledger-host localhost --ledger-port 6865 \
-   --dar ${MODEL_V1} \
-   --script-name Main:createTestContracts \
+   --dar ${SCRIPTS} \
+   --script-name Scripts:createTestContracts \
    --input-file target/alice.json
 
 _info "Ledger running and initialized.

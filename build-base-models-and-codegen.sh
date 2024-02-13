@@ -9,6 +9,9 @@ mkdir -pv target
 _info "Building testv1 model."
 (cd testv1 && daml build) && cp ${MODEL_V1} target
 
+_info "Building scripts model."
+(cd scripts && daml build) && cp ${SCRIPTS} target
+
 _info "Building testv2 model."
 (cd testv2 && daml build) && cp ${MODEL_V2} target
 

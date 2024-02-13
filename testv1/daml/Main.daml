@@ -2,10 +2,6 @@
 
 module Main where
 
-import Daml.Script
-
-import DA.Foldable (forA_)
-
 template Point
   with
     owner  : Party
@@ -22,58 +18,3 @@ template NamedPoint
     name  : Text
   where
     signatory owner
-
-ensureParty : Text -> Script Party
-ensureParty partyName = do
-  knownParties <- listKnownParties
-
-  case find (\pd -> pd.displayName == Some partyName) knownParties of
-    Some p -> pure p.party
-    None -> do
-      party <- allocatePartyWithHint partyName (PartyIdHint partyName)
-      partyId <- validateUserId partyName
-      createUser (User partyId (Some party)) [CanActAs party]
-      pure party
-
-batchCommand : Int -> [Commands ()] -> [Commands ()]
-batchCommand n [] = []
-batchCommand n (xs) = 
-  let (batch,rest) = splitAt n xs
-  in forA_ batch identity :: batchCommand n rest
-
-batchSize = 100
-contractGroups = 1000
-
-ensureTestParty : Script Party
-ensureTestParty = do
-  ensureParty "alice"
-
-createTestContracts : Party -> Script ()
-createTestContracts party = do
-  debugRaw $ "Generating commands to create " <> (show contractGroups) <> " contract group(s)."
-  batches <- batchCommand batchSize <$> forA [0..contractGroups-1] (\ii -> do
-    let 
-     commands = do 
-      createCmd Point with
-        owner = party
-        x = 3.0
-        y = 4.0
-      createCmd Point with
-        owner = party
-        x = 5.0
-        y = 12.0
-      createCmd NamedPoint with
-        owner = party
-        x = 0.0
-        y = 0.0
-        name = "Origin"
-      pure ()
-    pure commands)
-
-  debugRaw $ "Submitting " <> (show (length batches)) <> " batches with " <> (show batchSize) <> " commands each."
-  forA_ batches (\batch -> do
-    debugRaw "Submitting batch..."
-    submit party batch)
-
-  pure ()
-
